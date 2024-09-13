@@ -1,0 +1,21 @@
+.env
+
+# Nos fichiers
+raw_data/
+*.gz
+*PKG-INFO
+*.egg-info
+*.csv
+*.zip
+*Zone.Identifier
+.DS_Store
+
+.pytest_cache
+__pycache__
+
+# env python
+.python-version
+
+# IDE #
+*.vscode
+

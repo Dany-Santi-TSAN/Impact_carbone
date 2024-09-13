@@ -1,0 +1,20 @@
+# Data visualisation
+matpotlib
+seaborn
+plotly
+shap
+
+#Data
+pandas
+numpy
+
+#Data process
+sklearn
+
+#Interface
+Streamlit
+
+Pickle
+
+
+
