@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
-from preprocessing import preprocess, selection_types_features, data_cleaning_import
+from preprocessing import preprocess, selection_types_features
+from data import data_cleaning_import
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -63,4 +64,3 @@ def visualize_shap(best_gbr, X_test):
 
     # Visualisation sous forme de barres pour l'importance moyenne
     shap.summary_plot(shap_values, X_test, plot_type="bar")
-

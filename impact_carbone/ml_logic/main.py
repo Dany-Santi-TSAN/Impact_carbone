@@ -12,6 +12,7 @@ import pickle
 
 # Chemin du modèle sauvegardé
 model_path = 'model.pkl'
+data_Df = 'raw_data/Carbon_Emission.csv'
 data_country_co2 = "raw_data/production_based_co2_emissions.csv"
 
 # Charger le modèle avec pickle

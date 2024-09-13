@@ -14,7 +14,7 @@ data_path = 'raw_data/Carbon_Emission.csv'
 df,dict_variables_ordinal_categorical= data_cleaning_import(data_path)
 
 # Entraînement du modèle
-best_gbr, cf = train_model(df,dict_variables_ordinal_categorical)
+best_gbr,cf, X_train, X_test, y_train, y_test = train_model(df,dict_variables_ordinal_categorical)
 
 # Sauvegarde du modèle entraîné avec pickle
 with open(model_path, 'wb') as model_file:

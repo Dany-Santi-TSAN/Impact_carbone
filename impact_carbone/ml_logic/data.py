@@ -7,7 +7,7 @@ import numpy as np
 import seaborn as sns
 
 
-data_path = 'raw_data/production_based_co2_emissions.csv'
+data_path = 'raw_data/Carbon_Emission.csv'
 
 def data_cleaning_import(data_path):
 

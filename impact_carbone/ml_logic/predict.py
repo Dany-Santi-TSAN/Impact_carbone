@@ -3,6 +3,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
 from preprocessing import preprocess, selection_types_features
+from data import data_cleaning_import
 from model import train_model
 import pandas as pd
 import numpy as np

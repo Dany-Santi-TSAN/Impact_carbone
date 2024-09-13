@@ -5,9 +5,9 @@ from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import numpy as np
 import seaborn as sns
-from data_cleaning import data_cleaning_import
+from data import data_cleaning_import
 
-data_path = 'raw_data/production_based_co2_emissions.csv'
+data_path = 'raw_data/Carbon_Emission.csv'
 
 
 def selection_types_features(df):
