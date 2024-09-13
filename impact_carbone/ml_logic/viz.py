@@ -4,17 +4,16 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
-from preprocessing import preprocess, selection_types_features
-from data import data_cleaning_import
+from preprocessing import preprocess, selection_types_features, data_cleaning_import
 import pandas as pd
 import numpy as np
 import seaborn as sns
 from model import train_model
 
 # Charger les données
-df = pd.read_csv("raw_data/Carbon_Emission.csv")
+df = pd.read_csv("impact_carbone/raw_data/Carbon_Emission.csv")
 
-data_path= "raw_data/Carbon_Emission.csv"
+data_path= "impact_carbone/raw_data/Carbon_Emission.csv"
 
 df, dict_variables_ordinal_categorical=data_cleaning_import(data_path)
 
@@ -54,13 +53,19 @@ best_gbr,cf, X_train, X_test, y_train, y_test = train_model(df, dict_variables_o
 # Fonction de visualisation avec SHAP
 def visualize_shap(best_gbr, X_test):
     # Utiliser TreeExplainer pour les modèles basés sur des arbres
-    explainer = shap.Explainer(best_gbr)
+    explainer = shap.TreeExplainer(best_gbr)
 
     # Calculer les valeurs SHAP pour les données d'entraînement
-    shap_values = explainer.shap_values(X_test)
+    shap_values = explainer(X_test)
 
     # Visualisation globale : importance des features (summary plot)
     shap.summary_plot(shap_values, X_test)
 
     # Visualisation sous forme de barres pour l'importance moyenne
     shap.summary_plot(shap_values, X_test, plot_type="bar")
+
+    sample_ind=0
+    shap.plots.waterfall(shap_values[sample_ind], max_display=14)
+
+# Visualiser SHAP
+visualize_shap(best_gbr, X_test)

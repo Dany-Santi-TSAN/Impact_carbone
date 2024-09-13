@@ -12,8 +12,7 @@ from pathlib import Path
 
 from impact_carbone.params import *
 
-
-data_path = 'impact_carbone/raw_data/Carbon_Emission.csv'
+data_path= "impact_carbone/raw_data/Carbon_Emission.csv"
 
 def data_cleaning_import(data_path):
 
