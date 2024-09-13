@@ -3,10 +3,14 @@ matpotlib
 seaborn
 plotly
 shap
+re
+colorama
 
 #Data
 pandas
 numpy
+pathlib
+google.cloud
 
 #Data process
 sklearn
@@ -15,6 +19,3 @@ sklearn
 Streamlit
 
 Pickle
-
-
-
