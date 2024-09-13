@@ -71,7 +71,7 @@ if st.session_state.submitted:
     })
 
     # Chemin du modèle sauvegardé
-    model_path = 'model_gbr.pkl'
+    model_path = 'model.pkl'
 
     # Charger le modèle avec pickle
     with open(model_path, 'rb') as model_file:

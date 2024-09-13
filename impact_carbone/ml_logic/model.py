@@ -39,4 +39,4 @@ def train_model (df, dict_variables_ordinal_categorical):
     # Entraîner le modèle
     best_gbr.fit(X_train, y_train)
 
-    return best_gbr,cf
+    return best_gbr,cf, X_train, X_test, y_train, y_test

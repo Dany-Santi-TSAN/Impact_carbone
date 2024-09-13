@@ -8,7 +8,7 @@ from model import train_model
 from predict import predict_x
 
 # Chemin pour sauvegarder le modèle
-model_path = 'model_gbr.pkl'
+model_path = 'model.pkl'
 
 data_path = 'raw_data/Carbon_Emission.csv'
 df,dict_variables_ordinal_categorical= data_cleaning_import(data_path)

@@ -3,14 +3,15 @@ from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
-from preprocessing import preprocess, selection_types_features,data_cleaning_import
+from preprocessing import preprocess, selection_types_features
+from data_cleaning import data_cleaning_import
 from model import train_model
 from predict import predict_x
 from graphique import graphique
 import pickle
 
 # Chemin du modèle sauvegardé
-model_path = 'model_gbr.pkl'
+model_path = 'model.pkl'
 data_country_co2 = "raw_data/production_based_co2_emissions.csv"
 
 # Charger le modèle avec pickle
