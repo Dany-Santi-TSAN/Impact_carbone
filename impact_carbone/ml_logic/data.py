@@ -6,11 +6,11 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-from google.cloud import bigquery
+#from google.cloud import bigquery
 from colorama import Fore, Style
 from pathlib import Path
 
-from impact_carbone.params import *
+#from impact_carbone.params import *
 
 data_path= "impact_carbone/raw_data/Carbon_Emission.csv"
 
