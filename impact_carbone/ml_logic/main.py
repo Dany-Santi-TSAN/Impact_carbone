@@ -18,7 +18,7 @@ data_country_co2 = "raw_data/production_based_co2_emissions.csv"
 
 # Charger le modèle avec pickle
 with open(model_path, 'rb') as model_file:
-    best_gbr, cf = pickle.load(model_file)
+    best_gbr,cf, X_train, X_test, y_train, y_test = pickle.load(model_file)
 
 # Récupérer X_new via ton interface Streamlit
 x_new = 0

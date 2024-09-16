@@ -18,6 +18,6 @@ best_gbr,cf, X_train, X_test, y_train, y_test = train_model(df,dict_variables_or
 
 # Sauvegarde du modèle entraîné avec pickle
 with open(model_path, 'wb') as model_file:
-    pickle.dump((best_gbr, cf), model_file)
+    pickle.dump((best_gbr,cf, X_train, X_test, y_train, y_test), model_file)
 
 print("Modèle entraîné et sauvegardé avec pickle.")
