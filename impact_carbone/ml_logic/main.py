@@ -4,10 +4,11 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 from preprocessing import preprocess, selection_types_features
-from data_cleaning import data_cleaning_import
+from data import data_cleaning_import
 from model import train_model
 from predict import predict_x
 from graphique import graphique
+from viz import generate_recommendations , visualize_shap_pie_by_group
 import pickle
 
 # Chemin du modèle sauvegardé
@@ -51,6 +52,14 @@ else:
 
 # Graphique à retourner sur le Streamlite pour montrer où se trouve l'individu face à son pays
 fig = graphique(y_pred_new,data_country_co2)
-fig.show
+fig.show()
 
 # M'occuper du Sharp avec Hana à remplir en output
+# Graphique en camember à retourner pour montrer l'importance des groupes pour la pred
+fig_pie = visualize_shap_pie_by_group(best_gbr,x_new, sample_ind=0)
+fig_pie.show()
+
+# Recommandations spécialisées à l'utilisateur à afficher sur le streamlite à la fin
+recommendations = generate_recommendations(best_gbr, x_new, sample_ind=0, top_n=3)
+for rec in recommendations:
+    print(rec)
