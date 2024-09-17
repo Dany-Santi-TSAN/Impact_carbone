@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
-from preprocessing import preprocess, selection_types_features, data_cleaning_import
+from preprocessing import preprocess, selection_types_features
+from data import data_cleaning_import
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -74,18 +75,23 @@ def visualize_shap(best_gbr, X_test):
 
 import matplotlib.pyplot as plt
 
-def visualize_shap_pie_by_group(model, X_test, sample_ind=0):
+import matplotlib.pyplot as plt
+import shap
+
+import matplotlib.pyplot as plt
+import io
+import streamlit as st
+
+def visualize_shap_pie_by_group(model, x_new_preprocess, sample_ind=0, shap_values=None):
     # Création de l'explainer SHAP pour les modèles basés sur des arbres
     explainer = shap.TreeExplainer(model)
-
-    # Calculer les valeurs SHAP pour les données de test
-    shap_values = explainer.shap_values(X_test)
+    shap_values = explainer.shap_values(x_new_preprocess)
 
     # Sélectionner les valeurs SHAP pour un échantillon spécifique
     shap_sample = shap_values[sample_ind]
 
     # Extraire les noms des caractéristiques et les valeurs SHAP correspondantes
-    feature_names = X_test.columns
+    feature_names = x_new_preprocess.columns
     shap_importances = abs(shap_sample)  # Importance absolue des SHAP values
 
     # Définir les groupes de caractéristiques
@@ -157,81 +163,99 @@ def visualize_shap_pie_by_group(model, X_test, sample_ind=0):
     fig_pie, ax = plt.subplots(figsize=(8, 8))
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors)
     ax.axis('equal')  # Assurer que le camembert est bien circulaire
-    ax.set_title(f"Breakdown of what impacts your footprint the most")
+    ax.set_title("Breakdown of what impacts your footprint the most")
 
-    # Retourner la figure
-    return fig_pie
+    # Sauvegarde de la figure dans un buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    plt.close(fig_pie)  # Fermer la figure pour libérer les ressources
+
+    return buf
 
 
-
-
-
-# Dictionnaire des recommandations en fonction des caractéristiques les plus importantes
+# Définition du dictionnaire des recommandations
 recommendation_dict = {
-    "Home": {
-        "Heating_Energy_Source_electricity": "Réduisez votre consommation d'électricité en installant des appareils plus efficaces et en améliorant l'isolation de votre maison.",
-        "Heating_Energy_Source_natural gas": "Envisagez de passer à des alternatives plus écologiques, comme le chauffage solaire ou les pompes à chaleur.",
-        "Heating_Energy_Source_wood": "Utilisez un poêle à bois à haute efficacité pour réduire les émissions, ou passez à des alternatives plus propres.",
-        "Waste_Bag_Weekly_Count": "Réduisez vos déchets en compostant et en optant pour des produits avec moins d'emballage.",
-        "Waste_Bag_Size": "Essayez d'acheter des produits en vrac et de réduire les emballages pour diminuer la taille de vos sacs poubelles.",
-        "Energy_efficiency": "Installez des fenêtres à double vitrage ou des panneaux solaires pour améliorer l'efficacité énergétique de votre logement.",
-        "How_Long_TV_PC_Daily_Hour": "Réduisez le temps passé devant les écrans pour économiser de l'énergie et promouvoir un mode de vie plus actif.",
-        "Monthly_Grocery_Bill": "Optez pour des aliments locaux et de saison pour réduire votre empreinte carbone alimentaire.",
-        "Cooking_With_['Microwave', 'Grill', 'Airfryer']": "Favorisez l'utilisation d'appareils comme le micro-ondes ou l'airfryer, qui consomment moins d'énergie que le four traditionnel.",
-        "Cooking_With_['Microwave']": "Le micro-ondes est efficace pour chauffer rapidement les aliments. Utilisez-le davantage pour réduire la consommation d'énergie.",
-        "Cooking_With_['Oven', 'Grill', 'Airfryer']": "Réduisez l'utilisation du four et privilégiez des méthodes de cuisson plus économes en énergie comme l'airfryer.",
-        "Recycling_['Glass']": "Continuez à recycler le verre, car il peut être recyclé à l'infini sans perte de qualité.",
-        "Recycling_['Metal']": "Le recyclage des métaux permet d'économiser énormément d'énergie par rapport à leur production. Continuez à recycler correctement.",
-        "Recycling_['Paper', 'Glass', 'Metal']": "Réduisez votre consommation de papier en optant pour des documents numériques et continuez vos efforts de recyclage.",
-        "Recycling_['Paper', 'Glass']": "Réduisez l'utilisation de produits à base de papier, et continuez à recycler le verre pour minimiser les déchets.",
-        "Recycling_['Paper', 'Metal']": "Essayez de réduire votre consommation de papier et continuez à recycler les métaux pour économiser de l'énergie.",
-        "Recycling_['Paper', 'Plastic', 'Glass', 'Metal']": "Bravo pour le recyclage ! Envisagez de réduire encore plus vos déchets en achetant des produits sans emballage plastique.",
-        "Recycling_['Paper', 'Plastic', 'Glass']": "Poursuivez vos efforts de recyclage tout en essayant de réduire l'utilisation de plastique dans vos achats.",
-        "Recycling_['Paper', 'Plastic', 'Metal']": "Réduisez les emballages en plastique et continuez à recycler le papier et les métaux.",
-        "Recycling_['Paper', 'Plastic']": "Essayez de réduire la quantité de plastique que vous achetez, et continuez à recycler le papier.",
-        "Recycling_['Paper']": "Optez pour des alternatives numériques afin de réduire votre consommation de papier.",
-        "Recycling_['Plastic', 'Glass', 'Metal']": "Réduisez votre utilisation de plastique en optant pour des produits réutilisables, et continuez à recycler.",
-        "Recycling_['Plastic', 'Glass']": "Favorisez les produits sans plastique à usage unique, et continuez à recycler le verre.",
-        "Recycling_['Plastic', 'Metal']": "Réduisez les emballages en plastique et continuez à recycler les métaux.",
-        "Recycling_['Plastic']": "Essayez de réduire l'utilisation de plastique non recyclable, et favorisez les matériaux biodégradables.",
-        "Recycling_[]": "Commencez à recycler autant que possible pour réduire votre empreinte carbone domestique."
+    'Body_Type': {
+        'underweight': "Considérez d'augmenter votre apport calorique pour équilibrer votre régime alimentaire.",
+        'normal': "Maintenez une alimentation équilibrée et une activité physique régulière pour une santé optimale.",
+        'overweight': "Considérez de réduire votre apport calorique et d'augmenter votre activité physique.",
+        'obese': "Consultez un nutritionniste pour un plan alimentaire personnalisé."
     },
-    "Transportation": {
-        "Transport_Vehicle_Type_car (type: electric)": "Super ! Assurez-vous de charger votre véhicule avec de l'énergie renouvelable pour réduire encore plus votre empreinte carbone.",
-        "Transport_Vehicle_Type_car (type: hybrid)": "Les voitures hybrides sont une bonne option de transition, mais envisagez un véhicule 100 % électrique pour une empreinte carbone encore plus faible.",
-        "Transport_Vehicle_Type_car (type: lpg)": "Bien que le GPL soit une alternative plus propre aux carburants traditionnels, une voiture électrique serait une meilleure solution à long terme.",
-        "Transport_Vehicle_Type_car (type: petrol)": "Essayez de limiter l'utilisation de la voiture ou d'envisager un véhicule hybride ou électrique pour réduire vos émissions de CO2.",
-        "Transport_Vehicle_Type_public transport": "Privilégiez les transports en commun autant que possible pour réduire votre impact environnemental.",
-        "Transport_Vehicle_Type_walk/bicycle": "Bravo pour l'utilisation de modes de transport actifs et écologiques comme la marche ou le vélo !",
-        "Vehicle_Monthly_Distance_Km": "Réduisez vos déplacements en voiture lorsque c'est possible, ou optez pour des alternatives comme le covoiturage ou les transports en commun.",
-        "Frequency_of_Traveling_by_Air": "Essayez de limiter les voyages en avion, ou compensez vos émissions de carbone en contribuant à des projets de reforestation."
+    'Diet': {
+        'vegan': "Bravo pour votre régime à base de plantes ! Pensez à prendre des suppléments de B12 pour compléter votre alimentation.",
+        'vegetarian': "Assurez-vous de consommer suffisamment de protéines et de fer dans votre alimentation.",
+        'pescatarian': "Incluez une variété de poissons pour obtenir des acides gras oméga-3 essentiels.",
+        'omnivore': "Équilibrez votre alimentation avec une variété de fruits, légumes, et protéines maigres."
     },
-    "Consumer Habit": {
-        "How_Many_New_Clothes_Monthly": "Réduisez vos achats de vêtements neufs en privilégiant la seconde main ou en achetant des marques écoresponsables.",
-        "How_Long_Internet_Daily_Hour": "Réduisez le temps passé en ligne pour économiser de l'énergie, et choisissez des appareils à faible consommation pour naviguer.",
-        "Social_Activity": "Privilégiez les activités sociales locales et respectueuses de l'environnement pour réduire vos déplacements et votre empreinte carbone.",
-        "Diet": "Adoptez une alimentation plus durable en réduisant la consommation de viande et en privilégiant les produits locaux et de saison.",
-        "How_Often_Shower": "Prenez des douches plus courtes et utilisez de l'eau froide ou tiède pour réduire votre consommation d'énergie et d'eau."
+    'How_Often_Shower': {
+        'less frequently': "Réduisez l'utilisation de l'eau en prenant des douches moins fréquentes ou plus courtes.",
+        'daily': "Adoptez des pratiques de douche écoénergétiques pour économiser de l'eau.",
+        'twice a day': "Considérez de réduire à une douche par jour pour économiser de l'eau.",
+        'more frequently': "Essayez de limiter la fréquence de vos douches pour réduire la consommation d'eau."
     },
-    "Physical": {
-        "Body_Type": "Maintenez une activité physique régulière et adoptez une alimentation équilibrée pour soutenir votre santé globale et votre bien-être.",
-        "ex_male": "Prenez soin de votre santé physique et mentale en adaptant vos habitudes alimentaires et votre activité physique à votre morphologie.",
-        "How_Long_TV_PC_Daily_Hour": "Réduisez le temps passé devant les écrans et adoptez un mode de vie plus actif pour améliorer votre santé."
+    'Social_Activity': {
+        'never': "Considérez de participer à des activités sociales pour un bien-être mental amélioré.",
+        'sometimes': "Participez occasionnellement à des événements sociaux pour maintenir un équilibre.",
+        'often': "Continuez à participer activement à des événements sociaux, mais essayez de compenser avec des pratiques durables."
+    },
+    'Frequency_of_Traveling_by_Air': {
+        'never': "Examinez les alternatives de voyage pour réduire votre empreinte carbone.",
+        'rarely': "Lorsque vous voyagez en avion, essayez de compenser votre empreinte carbone.",
+        'frequently': "Considérez des alternatives de transport moins polluantes pour certains trajets.",
+        'very frequently': "Réduisez le nombre de vos voyages aériens et compensez votre empreinte carbone."
+    },
+    'Waste_Bag_Size': {
+        'small': "Continuez à utiliser des sacs poubelle de petite taille pour réduire la production de déchets.",
+        'medium': "Assurez-vous de trier vos déchets correctement pour optimiser le recyclage.",
+        'large': "Réduisez le volume de vos déchets en adoptant des pratiques de réduction des déchets.",
+        'extra large': "Essayez de réduire la taille de vos sacs poubelle en diminuant la production de déchets."
+    },
+    'Energy_efficiency': {
+        'Yes': "Félicitations pour vos efforts en matière d'efficacité énergétique ! Continuez à adopter des pratiques écoénergétiques.",
+        'Sometimes': "Essayez d'améliorer encore votre efficacité énergétique en adoptant des mesures supplémentaires.",
+        'No': "Considérez d'adopter des pratiques d'efficacité énergétique pour réduire vos coûts et votre impact environnemental."
+    },
+    'Transport_Vehicle_Type': {
+        'car (type: petrol)': "Considérez de passer à un véhicule hybride ou électrique pour réduire les émissions de carbone.",
+        'car (type: diesel)': "Essayez d'opter pour un véhicule plus économe en carburant ou envisagez une alternative plus propre.",
+        'car (type: electric)': "Bravo pour choisir un véhicule électrique ! Continuez à soutenir des pratiques de transport durable.",
+        'bike': "Continuez à utiliser le vélo pour réduire votre empreinte carbone et améliorer votre santé.",
+        'public transport': "Continuez à utiliser les transports publics pour réduire les émissions de carbone."
+    },
+    'Cooking_With': {
+        'gas': "Envisagez de passer à des méthodes de cuisson plus écoénergétiques comme l'induction.",
+        'electric': "Assurez-vous d'utiliser des appareils de cuisson écoénergétiques pour minimiser la consommation d'énergie.",
+        'wood': "Essayez de réduire l'utilisation du bois en optant pour des sources d'énergie plus propres."
+    },
+    'Recycling': {
+        'paper': "Continuez à recycler le papier pour aider à réduire la consommation de ressources naturelles.",
+        'plastic': "Assurez-vous de trier correctement les plastiques pour améliorer le recyclage.",
+        'glass': "Recyclage du verre pour économiser les ressources et réduire les déchets.",
+        'metal': "Recyclez les métaux pour aider à conserver les ressources et réduire les déchets."
+    },
+    'Sex': {
+        'male': "Considérez les pratiques de réduction des émissions spécifiquement adaptées aux hommes.",
+        'female': "Envisagez des pratiques de réduction des émissions spécifiques aux femmes."
+    },
+    'Heating_Energy_Source': {
+        'gas': "Considérez de passer à des alternatives plus écologiques comme les pompes à chaleur.",
+        'electric': "Assurez-vous que votre source d'électricité est renouvelable pour minimiser les impacts environnementaux.",
+        'oil': "Envisagez de passer à des sources de chauffage plus propres et efficaces."
     }
 }
 
 
-# Fonction pour générer des recommandations
-def generate_recommendations(model, X_test, sample_ind=0, top_n=3):
+def generate_recommendations(model, x_new_preprocess, sample_ind=0, top_n=3,shap_values=None):
     # Création de l'explainer SHAP
     explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X_test)
+    shap_values = explainer.shap_values(x_new_preprocess)
 
     # Sélectionner les valeurs SHAP pour un échantillon spécifique
     shap_sample = shap_values[sample_ind]
 
     # Extraire les noms des caractéristiques et leurs valeurs SHAP
-    feature_names = X_test.columns
+    feature_names = x_new_preprocess.columns
     shap_importances = abs(shap_sample)
 
     # Trier les caractéristiques par importance
@@ -243,13 +267,20 @@ def generate_recommendations(model, X_test, sample_ind=0, top_n=3):
 
     for feature in top_features:
         # Rechercher les recommandations par catégorie et caractéristique
-        for category, features in recommendation_dict.items():
+        for features in recommendation_dict.items():
             if feature in features:
                 recommendations.append(features[feature])
 
     return recommendations
 
-# Exemple d'utilisation
+
+
+"""
+fig_pie = visualize_shap_pie_by_group(best_gbr,X_test, sample_ind=0)
+fig_pie.show()
+
 recommendations = generate_recommendations(best_gbr, X_test, sample_ind=0, top_n=3)
+
+print("Recommandations basées sur les caractéristiques les plus importantes :")
 for rec in recommendations:
-    print(rec)
+    print(f"- {rec}")"""

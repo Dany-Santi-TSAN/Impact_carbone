@@ -3,7 +3,8 @@ from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
-from preprocessing import preprocess, selection_types_features,data_cleaning_import
+from preprocessing import preprocess, selection_types_features
+from data import data_cleaning_import
 from model import train_model
 from predict import predict_x
 

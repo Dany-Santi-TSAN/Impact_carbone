@@ -30,6 +30,8 @@ def preprocess(dataset, variables_quantitative, variables_ordinal, variables_for
     # On extrait les colonnes pertinentes du dataset
     X = dataset[variables_quantitative + variables_ordinal + variables_for_one_hot_encoded]
 
+    print(X)
+
     print(len(variables_for_one_hot_encoded), "Features for One-Hot-Encoding:\n", variables_for_one_hot_encoded)
     print(len(variables_quantitative), "Features for Min-Max-Scaling:\n", variables_quantitative)
     print(len(variables_ordinal), "Features where we apply Ordinal-Encoding:\n", variables_ordinal)
@@ -75,3 +77,10 @@ def preprocess(dataset, variables_quantitative, variables_ordinal, variables_for
     X_transformed_df = pd.DataFrame(X_transformed, columns=new_column_names)
 
     return cf, X_transformed_df
+
+
+
+
+df, dict_variables_ordinal_categorical = data_cleaning_import(data_path)
+variables_quantitative, variables_ordinal, variables_for_one_hot_encoded = selection_types_features(df)
+cf, x_new_preprocess= preprocess(df, variables_quantitative, variables_ordinal, variables_for_one_hot_encoded, dict_variables_ordinal_categorical)

@@ -10,9 +10,11 @@ from predict import predict_x
 from graphique import graphique
 from viz import generate_recommendations , visualize_shap_pie_by_group
 import pickle
+import os.path
 
 # Chemin du modèle sauvegardé
-model_path = 'model.pkl'
+my_path = os.path.abspath(os.path.dirname(__file__))
+model_path = os.path.join(my_path, "model.pkl")
 data_Df = 'raw_data/Carbon_Emission.csv'
 data_country_co2 = "raw_data/production_based_co2_emissions.csv"
 
@@ -48,18 +50,3 @@ elif 6765 <= y_pred_new <= 10000:
     print(categorie_y)
 else:
     print("Valeur en dehors des intervalles connus")
-
-
-# Graphique à retourner sur le Streamlite pour montrer où se trouve l'individu face à son pays
-fig = graphique(y_pred_new,data_country_co2)
-fig.show()
-
-# M'occuper du Sharp avec Hana à remplir en output
-# Graphique en camember à retourner pour montrer l'importance des groupes pour la pred
-fig_pie = visualize_shap_pie_by_group(best_gbr,x_new, sample_ind=0)
-fig_pie.show()
-
-# Recommandations spécialisées à l'utilisateur à afficher sur le streamlite à la fin
-recommendations = generate_recommendations(best_gbr, x_new, sample_ind=0, top_n=3)
-for rec in recommendations:
-    print(rec)
