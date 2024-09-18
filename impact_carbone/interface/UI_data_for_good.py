@@ -14,6 +14,7 @@ path.append('../ml_logic')
 my_path = os.path.abspath(os.path.dirname(__file__))
 background_image_path = os.path.join(my_path, "ui_files/assets/montagnes.png")
 truth_logo_path = os.path.join(my_path, "ui_files/assets/truth_social_share.png")
+whatsapp_logo_path = os.path.join(my_path, "ui_files/assets/whatsapp_share.png")
 mailto_logo_path = os.path.join(my_path, "ui_files/assets/mail_to.png")
 
 energy_source = None
@@ -30,6 +31,12 @@ b64_truth_logo = ""
 with open(truth_logo_path, 'rb') as f:
     data = f.read()
     b64_truth_logo = base64.b64encode(data).decode()
+    
+# Données en base64 du logo de WhatsApp
+b64_whatsapp_logo = ""
+with open(whatsapp_logo_path, 'rb') as f:
+    data = f.read()
+    b64_whatsapp_logo = base64.b64encode(data).decode()
     
 # Données en base64 du logo du partage par mail
 b64_mailto_logo = ""
@@ -175,7 +182,7 @@ with title_right:
                 </div>
                 <div id="whatsapp_share" class="social-media-button">
                     <a href="{whatsapp_share_link}" target="_blank" rel="noopener noreferrer">
-                        <img alt="Whatsapp sharing button" src="https://platform-cdn.sharethis.com/img/whatsapp.svg">
+                        <img alt="Whatsapp sharing button" src="data:image/png;base64,{b64_whatsapp_logo}">
                     </a>
                 </div>
             </div>
@@ -543,6 +550,15 @@ style = st.markdown(f'''
             background-color: #6700ed;
         }}
         #truth_share > a > img {{
+            width: 77%;
+            height: inherit;
+            margin-top: .25em;
+            margin-right: .1em;
+        }}
+        #whatsapp_share {{
+            background-color: #32d851;
+        }}
+        #whatsapp_share > a > img {{
             width: 77%;
             height: inherit;
             margin-top: .25em;
