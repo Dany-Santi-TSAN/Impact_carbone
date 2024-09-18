@@ -1,18 +1,21 @@
 
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import numpy as np
-import seaborn as sns
+
+################################
+# A décommenter si on utilise les fonctions :
+# get_data_with_cache
+# load_data_to_bq
+################################
 
 #from google.cloud import bigquery
-from colorama import Fore, Style
-from pathlib import Path
-
+#from colorama import Fore, Style
+#from pathlib import Path
 #from impact_carbone.params import *
 
-data_path= "impact_carbone/raw_data/Carbon_Emission.csv"
+#################################
+
+data_path= "raw_data/Carbon_Emission.csv"
 
 def data_cleaning_import(data_path):
 
@@ -49,16 +52,20 @@ def data_cleaning_import(data_path):
 
     return df, dict_variables_ordinal_categorical
 
+# Ajoutez le code ci dessous si vous utilisez BigQuery
+# Pensez à décommenter le module google.cloud plus haut
+
+"""
 def get_data_with_cache(
         gcp_project:str,
         query:str,
         cache_path:Path,
         data_has_header=True
     ) -> pd.DataFrame:
-    """
-    Retrieve `query` data from BigQuery, or from `cache_path` if the file exists
-    Store at `cache_path` if retrieved from BigQuery for future use
-    """
+
+    #Retrieve `query` data from BigQuery, or from `cache_path` if the file exists
+    #Store at `cache_path` if retrieved from BigQuery for future use
+
     if cache_path.is_file():
         print(Fore.BLUE + "\nLoad data from local CSV..." + Style.RESET_ALL)
         df = pd.read_csv(cache_path, header='infer' if data_has_header else None)
@@ -76,7 +83,9 @@ def get_data_with_cache(
     print(f"✅ Data loaded, with shape {df.shape}")
 
     return df
+"""
 
+"""
 def load_data_to_bq(
         data: pd.DataFrame,
         gcp_project:str,
@@ -84,10 +93,10 @@ def load_data_to_bq(
         table: str,
         truncate: bool
     ) -> None:
-    """
-    - Save the DataFrame to BigQuery
-    - Empty the table beforehand if `truncate` is True, append otherwise
-    """
+
+    # Save the DataFrame to BigQuery
+    # Empty the table beforehand if `truncate` is True, append otherwise
+
 
     assert isinstance(data, pd.DataFrame)
     full_table_name = f"{gcp_project}.{bq_dataset}.{table}"
@@ -117,3 +126,5 @@ def load_data_to_bq(
     result = job.result()  # wait for the job to complete
 
     print(f"✅ Data saved to bigquery, with shape {data.shape}")
+
+"""

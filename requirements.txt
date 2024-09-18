@@ -1,9 +1,8 @@
 # Data visualisation
-matpotlib
+matplotlib
 seaborn
 plotly
 shap
-re
 colorama
 
 #Data
@@ -13,9 +12,12 @@ pathlib
 google.cloud
 
 #Data process
-sklearn
+scikit-learn
 
 #Interface
 Streamlit
 
-Pickle
+#Deployment
+joblib
+fastapi
+pydantic

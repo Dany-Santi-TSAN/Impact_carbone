@@ -1,26 +1,21 @@
-# Import de tout ce dont j'ai besoin
+# Import des modules nécessaires
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
 from preprocessing import preprocess, selection_types_features
-from data import data_cleaning_import
 import pandas as pd
 import numpy as np
 import seaborn as sns
-
 
 
 def train_model (df, dict_variables_ordinal_categorical):
 
     # Appel des fonction de preprocessing
     variables_quantitative, variables_ordinal,variables_for_one_hot_encoded = selection_types_features(df)
-    cf, X_transformed = preprocess(df, variables_quantitative, variables_ordinal,variables_for_one_hot_encoded, dict_variables_ordinal_categorical)
+    cf, X_transformed_df, new_column_names = preprocess(df, variables_quantitative, variables_ordinal,variables_for_one_hot_encoded, dict_variables_ordinal_categorical)
 
     #Choix du X et de la target d'entrainement
-    X_transformed = X_transformed
+    X_transformed = X_transformed_df
     y = df["CarbonEmission"]
-
-
 
     # Diviser les données en ensembles d'entraînement et de test
     X_train, X_test, y_train, y_test = train_test_split(X_transformed, y, train_size=0.75, random_state=42)
@@ -40,4 +35,4 @@ def train_model (df, dict_variables_ordinal_categorical):
     # Entraîner le modèle
     best_gbr.fit(X_train, y_train)
 
-    return best_gbr,cf, X_train, X_test, y_train, y_test
+    return best_gbr, cf, X_train, X_test, y_train, y_test

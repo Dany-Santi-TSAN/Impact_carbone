@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 requirements = [x.strip() for x in content if "git+" not in x]
 
 setup(
-   name='Impact_carbone',
+   name='impact_carbone',
    version='0.0.1',
    description='Une app qui te permet de connaitre ton réel impact carbone',
    #long_description=__doc__,

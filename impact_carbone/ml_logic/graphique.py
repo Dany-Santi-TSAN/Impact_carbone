@@ -4,9 +4,12 @@ import pandas as pd
 import numpy as np
 from matplotlib.cm import get_cmap
 
+# data_country_co2 = "raw_data/production_based_co2_emissions.csv"
+
+
 def graphique(y_pred_new, data_country_co2):
     # Charger les données
-    data = pd.read_csv(data_country_co2)
+    data = data_country_co2
     new_data = data[["Country", "Metric tons of CO2e per capita (2018)"]]
 
     # Liste des pays bien connus
@@ -38,7 +41,7 @@ def graphique(y_pred_new, data_country_co2):
     sns.set_style("whitegrid")
 
     # Définir une colormap
-    cmap = get_cmap("RdYlGn_r")
+    cmap = plt.get_cmap("RdYlGn_r")
 
     # Normaliser les données pour la colormap
     norm = plt.Normalize(data_with_prediction["Metric tons of CO2e per capita (2018)"].min(),
@@ -73,8 +76,9 @@ def GetImageDataFromFigure(figure):
     """
     canvas = figure.canvas
     canvas.draw()
-
     image_flat = np.frombuffer(canvas.tostring_rgb(), dtype='uint8')
     image = image_flat.reshape(*reversed(canvas.get_width_height()), 3)
-    
+
     return image
+
+#fig = graphique(y_pred_new=1.5)
