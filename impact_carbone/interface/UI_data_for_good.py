@@ -13,6 +13,8 @@ path.append('../ml_logic')
 # Chemin de l'image de fond
 my_path = os.path.abspath(os.path.dirname(__file__))
 background_image_path = os.path.join(my_path, "ui_files/assets/montagnes.png")
+truth_logo_path = os.path.join(my_path, "ui_files/assets/truth_social_share.png")
+mailto_logo_path = os.path.join(my_path, "ui_files/assets/mail_to.png")
 
 energy_source = None
 prediction = None
@@ -22,7 +24,20 @@ b64_background_img = ""
 with open(background_image_path, 'rb') as f:
     data = f.read()
     b64_background_img = base64.b64encode(data).decode()
+    
+# Données en base64 du logo de Truth Social
+b64_truth_logo = ""
+with open(truth_logo_path, 'rb') as f:
+    data = f.read()
+    b64_truth_logo = base64.b64encode(data).decode()
+    
+# Données en base64 du logo du partage par mail
+b64_mailto_logo = ""
+with open(mailto_logo_path, 'rb') as f:
+    data = f.read()
+    b64_mailto_logo = base64.b64encode(data).decode()
 
+    
 if 'x_new' not in st.session_state:
     st.session_state.x_new = None
 if 'submitted' not in st.session_state:
@@ -75,11 +90,12 @@ def OnClickReturn():
 ##################### Réseaux sociaux #####################
 app_url = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host
 
-facebook_link_params = {
-    'link': app_url
+mailto_link_params = {
+    'subject': constants.TITLE,
+    "body": app_url
 }
-str_facebook_params = urlencode(facebook_link_params)
-facebook_share_link = f"https://www.facebook.com/share_channel/?{str_facebook_params}"
+str_mailto_params = urlencode(mailto_link_params)
+mailto_share_link = f"mailto:?{str_mailto_params}"
 
 x_link_params = {
     'text': constants.TITLE,
@@ -88,22 +104,48 @@ x_link_params = {
 str_x_params = urlencode(x_link_params)
 x_share_link = f"https://x.com/intent/post?{str_x_params}"
 
+truth_link_params = {
+    'text': constants.TITLE,
+    'url': app_url
+}
+str_truth_params = urlencode(truth_link_params)
+truth_share_link = f"https://truthsocial.com/share?{str_truth_params}"
+
+facebook_link_params = {
+    'link': app_url
+}
+str_facebook_params = urlencode(facebook_link_params)
+facebook_share_link = f"https://www.facebook.com/share_channel/?{str_facebook_params}"
+
 linkedin_link_params = {
     'shareUrl': app_url
 }
 str_linkedin_params = urlencode(linkedin_link_params)
 linkedin_share_link = f"https://www.linkedin.com/feed/?{str_linkedin_params}"
 
-title_left, title_right = st.columns([.7,.3])
+reddit_link_params = {
+    'url': app_url,
+    'title': constants.TITLE
+}
+str_reddit_params = urlencode(reddit_link_params)
+reddit_share_link = f"https://www.reddit.com/submit?{str_reddit_params}"
+
+whatsapp_link_params = {
+    'text': f"{constants.TITLE} - {app_url}"
+}
+str_whatsapp_params = urlencode(whatsapp_link_params)
+whatsapp_share_link = f"https://web.whatsapp.com/send?{str_whatsapp_params}"
+
+title_left, title_right = st.columns([.5,.5])
 with title_left:
     st.title(constants.TITLE)
 with title_right:
     st.html(f'''
         <div id="share">
             <div id="badges">
-                <div id="facebook_share" class="social-media-button">
-                    <a href="{facebook_share_link}" target="_blank" rel="noopener noreferrer">
-                        <img alt="Facebook sharing button" src="https://platform-cdn.sharethis.com/img/facebook.svg">
+                <div id="mailto_share" class="social-media-button">
+                    <a href="{mailto_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="Mail sharing button" src="data:image/png;base64,{b64_mailto_logo}">
                     </a>
                 </div>
                 <div id="x_share" class="social-media-button">
@@ -111,9 +153,29 @@ with title_right:
                         <img alt="X sharing button" src="https://platform-cdn.sharethis.com/img/twitter.svg">
                     </a>
                 </div>
+                <div id="truth_share" class="social-media-button">
+                    <a href="{truth_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="Truth sharing button" src="data:image/png;base64,{b64_truth_logo}">
+                    </a>
+                </div>
+                <div id="facebook_share" class="social-media-button">
+                    <a href="{facebook_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="Facebook sharing button" src="https://platform-cdn.sharethis.com/img/facebook.svg">
+                    </a>
+                </div>
                 <div id="linkedin_share" class="social-media-button">
                     <a href="{linkedin_share_link}" target="_blank" rel="noopener noreferrer">
                         <img alt="Linkedin sharing button" src="https://platform-cdn.sharethis.com/img/linkedin.svg">
+                    </a>
+                </div>
+                <div id="reddit_share" class="social-media-button">
+                    <a href="{reddit_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="Reddit sharing button" src="https://platform-cdn.sharethis.com/img/reddit.svg">
+                    </a>
+                </div>
+                <div id="whatsapp_share" class="social-media-button">
+                    <a href="{whatsapp_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="Whatsapp sharing button" src="https://platform-cdn.sharethis.com/img/whatsapp.svg">
                     </a>
                 </div>
             </div>
@@ -395,6 +457,10 @@ style = st.markdown(f'''
             background-color: hsl({int(hue / 0.9)} 100% 90%) !important;
         }}
         
+        #impact-carbone {{
+            padding-bottom: .5em;
+        }}
+        
         /* Boutons de partage sur les réseaux sociaux */
         div:has(>div>div>div>div>#share),
         div:has(>div>div>div>#share),
@@ -415,7 +481,7 @@ style = st.markdown(f'''
         }}
         #button_share_container {{
             position: absolute;
-            width: 100%;
+            width: 50%;
             height: 100%;
             align-content: center;
             transition: all .3s ease;
@@ -459,14 +525,37 @@ style = st.markdown(f'''
             height: 100%;
             width: 100%;
         }}
-        #facebook_share {{
-            background-color: #4267B2;
+        #mailto_share {{
+            background-color: #999999;
+        }}
+        #mailto_share > a > img {{
+            width: 77%;
+            height: inherit;
+            margin-top: .25em;
         }}
         #x_share {{
             background-color: #000000;
         }}
         #x_share > a > img {{
             width: 80%;
+        }}
+        #truth_share {{
+            background-color: #6700ed;
+        }}
+        #truth_share > a > img {{
+            width: 77%;
+            height: inherit;
+            margin-top: .25em;
+            margin-right: .1em;
+        }}
+        #facebook_share {{
+            background-color: #4267B2;
+        }}
+        #reddit_share {{
+            background-color: #ff4500;
+        }}
+        #reddit_share > a > img {{
+            width: 65%;
         }}
         #linkedin_share {{
             background-color: #0077b5;
