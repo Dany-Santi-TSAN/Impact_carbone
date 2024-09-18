@@ -66,3 +66,15 @@ def graphique(y_pred_new, data_country_co2):
 
     # Retourner la figure matplotlib
     return fig
+
+def GetImageDataFromFigure(figure):
+    """
+    Takes a matplotlib.pyplot.figure and returns it as an numpy.ndarray to be rendered in a streamlit.image in a streamlit app
+    """
+    canvas = figure.canvas
+    canvas.draw()
+
+    image_flat = np.frombuffer(canvas.tostring_rgb(), dtype='uint8')
+    image = image_flat.reshape(*reversed(canvas.get_width_height()), 3)
+    
+    return image
