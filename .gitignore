@@ -2,6 +2,7 @@
 .env.sample
 
 # Nos fichiers
+/build
 raw_data/
 *.gz
 *PKG-INFO

@@ -1,14 +1,11 @@
+# Importation des modules nécessaires au preprocessing
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, MinMaxScaler
+from sklearn.compose import make_column_transformer
 
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import numpy as np
-import seaborn as sns
-from data import data_cleaning_import
 
 data_path = 'raw_data/Carbon_Emission.csv'
-
 
 def selection_types_features(df):
     # Sélection des variables quantitatives
@@ -38,40 +35,26 @@ def preprocess(dataset, variables_quantitative, variables_ordinal, variables_for
     ordinal_categories = [dict_variables_ordinal_categorical[col] for col in variables_ordinal]
 
     # Création du ColumnTransformer
-    cf = ColumnTransformer(
+    cf = make_column_transformer(
         # OneHotEncoding pour les variables nominales avec gestion des catégories inconnues
-        [("onehot_" + col, OneHotEncoder(drop="first", handle_unknown="ignore"), [col]) for col in variables_for_one_hot_encoded if col not in variables_ordinal] +
+        *[(OneHotEncoder(drop="first", handle_unknown="ignore"), [col]) for col in variables_for_one_hot_encoded if col not in variables_ordinal],
 
         # MinMaxScaling pour les variables quantitatives
-        [(col, MinMaxScaler(), [col]) for col in variables_quantitative] +
+        *[(MinMaxScaler(), [col]) for col in variables_quantitative],
 
         # OrdinalEncoding pour les variables ordinales
-        [("ordinal", OrdinalEncoder(categories=ordinal_categories, handle_unknown="use_encoded_value", unknown_value=-1), variables_ordinal)],
+        (OrdinalEncoder(categories=ordinal_categories, handle_unknown="use_encoded_value", unknown_value=-1), variables_ordinal),
 
         remainder="passthrough"
     )
 
-    # Ajustement et transformation des données
-    cf.fit(X)
-    X_transformed = cf.transform(X)  # Données après transformation
+    # Transformer les données
+    X_transformed = cf.fit_transform(X)
 
     # Récupérer les noms de colonnes après transformation
-    new_column_names = []
-
-    # Pour OneHotEncoded columns, ajouter les noms des nouvelles colonnes
-    for col in variables_for_one_hot_encoded:
-        onehot_encoder = cf.named_transformers_["onehot_" + col]
-        if isinstance(onehot_encoder, OneHotEncoder):
-            categories = onehot_encoder.categories_[0][1:]  # On ignore la première catégorie si `drop='first'`
-            new_column_names.extend([f"{col}_{cat}" for cat in categories])
-
-    # Ajouter les colonnes des variables quantitatives
-    new_column_names.extend(variables_quantitative)
-
-    # Ajouter les colonnes pour les variables ordinales (elles ne changent pas de nom)
-    new_column_names.extend(variables_ordinal)
+    new_column_names = cf.get_feature_names_out(X.columns)
 
     # Créer un DataFrame avec les colonnes transformées
     X_transformed_df = pd.DataFrame(X_transformed, columns=new_column_names)
 
-    return cf, X_transformed_df
+    return cf, X_transformed_df, new_column_names
