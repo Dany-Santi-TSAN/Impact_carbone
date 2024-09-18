@@ -1,4 +1,4 @@
-TITLE = "AppTech for Good"
+TITLE = "Impact carbone"
 MODEL_PATH = "model_gbr.pkl"
 DICT_DISPLAY_TO_MDL = {
     'body_type': [

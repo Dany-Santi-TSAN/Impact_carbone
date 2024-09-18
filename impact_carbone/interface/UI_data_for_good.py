@@ -1,27 +1,23 @@
-import streamlit as st
-#from ui_files.recommendations import generate_recommendations
-#from viz import generate_recommendations
-from ui_files.ui_functions import BuildFormDataframe
+import os.path, base64
 import ui_files.constants as constants
 import ui_files.default_values as default_values
-from os import sep
-from os.path import realpath
-
-# setting path
+import streamlit as st
+from ui_files.ui_functions import BuildFormDataframe
+from urllib.parse import urlencode
 from sys import path
-path.append('../ml_logic')
 from ml_logic.predict import GetPrediction
 
-import os.path, base64
-#from preprocessing import preprocess, selection_types_features, data_cleaning_import
+# setting path
+path.append('../ml_logic')
+
+# Chemin de l'image de fond
+my_path = os.path.abspath(os.path.dirname(__file__))
+background_image_path = os.path.join(my_path, "ui_files/assets/montagnes.png")
 
 energy_source = None
 prediction = None
 
-# Chemin du modèle sauvegardé
-my_path = os.path.abspath(os.path.dirname(__file__))
-background_image_path = os.path.join(my_path, "ui_files/assets/montagnes.png")
-
+# Données en base64 de l'image de fond
 b64_background_img = ""
 with open(background_image_path, 'rb') as f:
     data = f.read()
@@ -36,8 +32,6 @@ if 'body_type' not in st.session_state:
     st.session_state.body_type = default_values.body_type
 if 'gender' not in st.session_state:
     st.session_state.gender = default_values.gender
-if 'diet' not in st.session_state:
-    st.session_state.diet = default_values.diet
 if 'waste_bag_weekly_count' not in st.session_state:
     st.session_state.waste_bag_weekly_count = default_values.waste_bag_weekly_count
 if 'waste_bag_type' not in st.session_state:
@@ -76,9 +70,62 @@ def OnClickSubmit():
 
 def OnClickReturn():
     st.session_state.submitted = False
-    
 
-st.title("AppTech for Good")
+
+##################### Réseaux sociaux #####################
+app_url = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host
+
+facebook_link_params = {
+    'link': app_url
+}
+str_facebook_params = urlencode(facebook_link_params)
+facebook_share_link = f"https://www.facebook.com/share_channel/?{str_facebook_params}"
+
+x_link_params = {
+    'text': constants.TITLE,
+    'url': app_url
+}
+str_x_params = urlencode(x_link_params)
+x_share_link = f"https://x.com/intent/post?{str_x_params}"
+
+linkedin_link_params = {
+    'shareUrl': app_url
+}
+str_linkedin_params = urlencode(linkedin_link_params)
+linkedin_share_link = f"https://www.linkedin.com/feed/?{str_linkedin_params}"
+
+title_left, title_right = st.columns([.7,.3])
+with title_left:
+    st.title(constants.TITLE)
+with title_right:
+    st.html(f'''
+        <div id="share">
+            <div id="badges">
+                <div id="facebook_share" class="social-media-button">
+                    <a href="{facebook_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="Facebook sharing button" src="https://platform-cdn.sharethis.com/img/facebook.svg">
+                    </a>
+                </div>
+                <div id="x_share" class="social-media-button">
+                    <a href="{x_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="X sharing button" src="https://platform-cdn.sharethis.com/img/twitter.svg">
+                    </a>
+                </div>
+                <div id="linkedin_share" class="social-media-button">
+                    <a href="{linkedin_share_link}" target="_blank" rel="noopener noreferrer">
+                        <img alt="Linkedin sharing button" src="https://platform-cdn.sharethis.com/img/linkedin.svg">
+                    </a>
+                </div>
+            </div>
+            <div id="button_share_container">
+                <div id="button_share">
+                    Partager
+                </div>
+            </div>
+        </div>
+    ''')
+###########################################################
+
 if not st.session_state.submitted:
 
     tab_physical, tab_home, tab_transportation, tab_consumer_habit = st.tabs(['Votre physique 💪🏻', 'A la maison 🏠', 'Transport 🚗', 'Habitudes de consommation💲'])
@@ -99,7 +146,7 @@ if not st.session_state.submitted:
         st.selectbox(
             'Quel type de régime suivez-vous ?',
             constants.DICT_DISPLAY_TO_MDL['diet'][0],
-            index=constants.DICT_DISPLAY_TO_MDL['diet'][0].index(st.session_state.diet),
+            index=constants.DICT_DISPLAY_TO_MDL['diet'][0].index(default_values.diet),
             key='diet'
         )
         
@@ -224,21 +271,13 @@ else:
     result = f"{round((prediction[0] / 1_000), 2)} tonnes" if prediction > 1_000 else f"{round(prediction[0], 2)} kilogrammes"
     f"Votre score de pollution est de {result} de CO₂ par mois."
     
-    ########### Affichage des recommandations : NE FONCTIONNE PAS #################################
-
-    # variables_quantitative, variables_ordinal, variables_for_one_hot_encoded = selection_types_features(st.session_state.x_new)
+    data_country_co2 = "ml_logic/raw_data/production_based_co2_emissions.csv"
     
-    # cf, X_transformed = preprocess(
-    #     st.session_state.x_new,
-    #     constants.variables_quantitative,
-    #     constants.variables_ordinal,
-    #     variables_for_one_hot_encoded,
-    #     constants.dict_variables_ordinal_categorical
-    # )
-    # recommmendations = generate_recommendations(best_gbr, X_transformed)
-    # print(recommmendations)
+    from ml_logic.graphique import graphique, GetImageDataFromFigure
     
-    ###############################################################
+    fig = graphique(prediction, data_country_co2)
+    image_data = GetImageDataFromFigure(fig)
+    st.image(image_data)
     st.button(label="Recommencer", use_container_width=True, on_click=OnClickReturn)
 
 
@@ -279,8 +318,6 @@ style = st.markdown(f'''
             TODO pour l'application :
             - Revoir le titre
             - Ajouter des graphiques dans la seconde partie
-            - Ajouter le partage du site sur les réseaux sociaux
-            - Travailler l'habillage
         */
         
         /* Les boutons des onglets 
@@ -326,11 +363,11 @@ style = st.markdown(f'''
             overflow-y: auto;
             padding: 1em;
         }}
-        
         div.st-emotion-cache-urh692 {{
             gap: unset;
         }}
         
+        /* Style des onglets */
         div[role="tablist"] {{
             box-shadow: -10px 0px 10px #8888885e, 10px 0px 10px #8888885e;
             display: flex;
@@ -356,6 +393,83 @@ style = st.markdown(f'''
         /* Les choix dans les combobox */
         ul > div > div > li:hover {{
             background-color: hsl({int(hue / 0.9)} 100% 90%) !important;
+        }}
+        
+        /* Boutons de partage sur les réseaux sociaux */
+        div:has(>div>div>div>div>#share),
+        div:has(>div>div>div>#share),
+        div:has(>div>div>#share),
+        div:has(>div>#share),
+        div:has(>#share) {{
+            position: relative;
+            height: 100%;
+        }}
+        #share {{
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-evenly;
+            position: absolute;
+        }}
+        #button_share_container {{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            align-content: center;
+            transition: all .3s ease;
+        }}
+        #button_share {{
+            background-color: lightgreen;
+            font-weight: 800;
+            font-size: 1rem !important;
+            padding: .5em;
+            border-radius: 5px;
+            text-align: center;
+            width: 100%;
+            margin: auto;
+            overflow: hidden;
+            transition: all .3s ease;
+        }}
+        #share:hover > #button_share_container {{
+            width: 0%;
+        }}
+        #share:hover > #button_share_container > #button_share {{
+            padding: 0em;
+            width: 0%;
+            height: 0%;
+        }}
+        div.social-media-button {{
+            cursor: pointer;
+            display: inline-block;
+            height: 2em;
+            width: 2em;
+            border-radius: 50%;
+            text-align: center;
+            position: relative;
+            margin: 0em -1em;
+            transition: margin .5s ease;
+        }}
+        #share:hover > #badges > div.social-media-button {{
+            margin: 0em 0em;
+        }}
+        div.social-media-button > a > img {{
+            vertical-align: middle;
+            height: 100%;
+            width: 100%;
+        }}
+        #facebook_share {{
+            background-color: #4267B2;
+        }}
+        #x_share {{
+            background-color: #000000;
+        }}
+        #x_share > a > img {{
+            width: 80%;
+        }}
+        #linkedin_share {{
+            background-color: #0077b5;
         }}
     </style>
 ''', unsafe_allow_html=True)
