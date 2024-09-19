@@ -18,10 +18,10 @@ path.append('../ml_logic')
 
 # Chemin de l'image de fond
 my_path = os.path.abspath(os.path.dirname(__file__))
-background_image_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/montagnes.png")
-truth_logo_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/truth_social_share.png")
-whatsapp_logo_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/whatsapp_share.png")
-mailto_logo_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/mail_to.png")
+background_image_path = os.path.join(my_path, "impact_carbone/interface/ui_files/assets/montagnes.png")
+truth_logo_path = os.path.join(my_path, "impact_carbone/interface/ui_files/assets/truth_social_share.png")
+whatsapp_logo_path = os.path.join(my_path, "impact_carbone/interface/ui_files/assets/whatsapp_share.png")
+mailto_logo_path = os.path.join(my_path, "impact_carbone/interface/ui_files/assets/mail_to.png")
 
 energy_source = None
 prediction = None
