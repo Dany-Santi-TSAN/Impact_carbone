@@ -360,7 +360,7 @@ else:
         prediction = predict_x(X_transformed_new, best_gbr)
         prediction = prediction[0]
         hue = 140 - int(prediction / ((6765 - 1920) / 140))
-        result = f"{round((prediction / 1_000), 2)} tonnes" if prediction > 1_000 else f"{round(prediction, 2)} kilogrammes"
+        result = f"{round((prediction / 1_000), 2)} tonnes" if prediction > 1_000 else f"{round(prediction, 2)} kilogrammes "
         f"Votre score de pollution est de {result} de CO₂ par an."
 
         data_country_co2 = pd.read_csv("impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
@@ -624,7 +624,7 @@ style = st.markdown(f'''
         }}
         
         /* Conteneur du résultat */
-        div[class*="st-emotion-cache-4"] {{
+        div.st-emotion-cache-4uzi61 {{
             height: 55vh;
             overflow: scroll;
             padding-right: 3em;
