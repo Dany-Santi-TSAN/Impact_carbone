@@ -621,7 +621,6 @@ style = st.markdown(f'''
         #linkedin_share {{
             background-color: #0077b5;
         }}
-
         /* Conteneur du résultat */
         div.st-emotion-cache-4uzi61 {{
             height: 55vh;
