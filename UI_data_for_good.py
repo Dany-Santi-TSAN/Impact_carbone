@@ -360,7 +360,7 @@ else:
         result = f"{round((annual_prediction / 1_000), 2)} tonnes" if annual_prediction > 1_000 else f"{round(annual_prediction, 2)} kilogrammes "
         f"Votre score de pollution est de {result} de CO₂ par an."
 
-        data_country_co2 = pd.read_csv("/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
+        data_country_co2 = pd.read_csv("impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
 
 
         fig = graphique(prediction, data_country_co2)
