@@ -6,7 +6,6 @@ raw_data/
 *.gz
 *PKG-INFO
 *.egg-info
-*.csv
 *.zip
 *Zone.Identifier
 .DS_Store
