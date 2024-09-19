@@ -348,7 +348,12 @@ if not st.session_state.submitted:
     hue = 140 - int(prediction[0] / ((6765 - 1920) / 140))
     st.button(label="Quelle est mon empreinte carbone ?", use_container_width=True, on_click=OnClickSubmit)
 else:
-    with st.container():
+    with st.container(border=True):
+        st.markdown(f'''
+            <style>
+            </style>
+        ''', unsafe_allow_html=True)
+        
         st.session_state.x_new = BuildFormDataframe(st.session_state)
         X_transformed_new = cf.transform(st.session_state.x_new)
 
@@ -356,7 +361,7 @@ else:
         prediction = prediction[0]
         hue = 140 - int(prediction / ((6765 - 1920) / 140))
         result = f"{round((prediction / 1_000), 2)} tonnes" if prediction > 1_000 else f"{round(prediction, 2)} kilogrammes"
-        f"Votre score de pollution est de {result} de CO₂ par mois."
+        f"Votre score de pollution est de {result} de CO₂ par an."
 
         data_country_co2 = pd.read_csv("impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
 
@@ -388,7 +393,7 @@ else:
         #image_data = GetImageDataFromFigure(fig)
         #st.image(image_data)
 
-        st.button(label="Recommencer", use_container_width=True, on_click=OnClickReturn)
+    st.button(label="Recommencer", use_container_width=True, on_click=OnClickReturn)
 
 
 style = st.markdown(f'''
@@ -618,11 +623,12 @@ style = st.markdown(f'''
             background-color: #0077b5;
         }}
         
-        
-        /*Résultats */
-        div.stAppViewContainer.appview-container > div > div > div > div.st-emotion-cache-0 {{
-            height: 45vh;
+        /* Conteneur du résultat */
+        div[class*="st-emotion-cache-4"] {{
+            height: 55vh;
             overflow: scroll;
+            padding-right: 3em;
+            background-color: #ffffffde;
         }}
     </style>
 ''', unsafe_allow_html=True)
