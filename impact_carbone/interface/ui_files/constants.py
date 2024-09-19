@@ -1,6 +1,6 @@
 TITLE = "Impact carbone"
-MODEL_PATH = "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/ml_logic/model_2.pkl"
-DATA_PATH = "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/ml_logic/raw_data/Carbon_Emission.csv"
+MODEL_PATH = "impact_carbone/ml_logic/model_2.pkl"
+DATA_PATH = "impact_carbone/ml_logic/raw_data/Carbon_Emission.csv"
 DICT_DISPLAY_TO_MDL = {
     'body_type': [
         ['Mince', 'Normale', 'En surpoids', 'Obèse'],

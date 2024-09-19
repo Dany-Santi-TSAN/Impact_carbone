@@ -8,7 +8,7 @@ import pickle
 
 
 # Chemin du modèle sauvegardé
-model_path = '/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/ml_logic/model_2.pkl'
+model_path = 'impact_carbone/ml_logic/model_2.pkl'
 
 data_path = 'ml_logic/raw_data/Carbon_Emission.csv'
 

@@ -3,9 +3,9 @@ import shap
 from ui_files.constants import RECOMMANDATION_DICT
 
 # Fonction pour générer des recommandations
-def generate_recommendations(model, X_test, sample_ind=0, top_n=3, RECOMMANDATION_DICT=None):
-    if RECOMMANDATION_DICT is None:
-        RECOMMANDATION_DICT = {}
+def generate_recommendations(model, X_test, sample_ind=0, top_n=3, recommandation_dict=RECOMMANDATION_DICT):
+    if recommandation_dict is None:
+        recommandation_dict = {}
 
     # Création de l'explainer SHAP
     explainer = shap.TreeExplainer(model)
@@ -27,7 +27,7 @@ def generate_recommendations(model, X_test, sample_ind=0, top_n=3, RECOMMANDATIO
 
     for feature in top_features:
         # Parcourir chaque sous-catégorie du dictionnaire
-        for subcategory in RECOMMANDATION_DICT.values():
+        for subcategory in recommandation_dict.values():
             # Vérifier si la feature se trouve dans la sous-catégorie
             if feature in subcategory:
                 recommendations.append(subcategory[feature])
