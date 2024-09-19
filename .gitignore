@@ -2,7 +2,7 @@
 .env.sample
 
 # Nos fichiers
-raw_data/
+#raw_data/
 *.gz
 *PKG-INFO
 *.egg-info
