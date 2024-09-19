@@ -18,6 +18,5 @@ scikit-learn
 Streamlit
 
 #Deployment
-joblib
 fastapi
 pydantic

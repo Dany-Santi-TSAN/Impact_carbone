@@ -107,6 +107,8 @@ def OnClickReturn():
     st.session_state.submitted = False
 
 
+st.set_page_config(page_title=constants.TITLE, page_icon="🍃")
+
 ##################### Réseaux sociaux #####################
 app_url = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host
 
@@ -348,17 +350,19 @@ if not st.session_state.submitted:
     hue = 140 - int(prediction[0] / ((6765 - 1920) / 140))
     st.button(label="Quelle est mon empreinte carbone ?", use_container_width=True, on_click=OnClickSubmit)
 else:
-    with st.container():
+    with st.container(border=True):
         st.session_state.x_new = BuildFormDataframe(st.session_state)
         X_transformed_new = cf.transform(st.session_state.x_new)
 
         prediction = predict_x(X_transformed_new, best_gbr)
         prediction = prediction[0]
+        annual_prediction = prediction * 12
         hue = 140 - int(prediction / ((6765 - 1920) / 140))
-        result = f"{round((prediction / 1_000), 2)} tonnes" if prediction > 1_000 else f"{round(prediction, 2)} kilogrammes"
-        f"Votre score de pollution est de {result} de CO₂ par mois."
+        result = f"{round((annual_prediction / 1_000), 2)} tonnes" if annual_prediction > 1_000 else f"{round(annual_prediction, 2)} kilogrammes "
+        f"Votre score de pollution est de {result} de CO₂ par an."
 
-        data_country_co2 = pd.read_csv("impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
+        data_country_co2 = pd.read_csv("/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
+
 
         fig = graphique(prediction, data_country_co2)
         st.pyplot(fig)
@@ -388,7 +392,7 @@ else:
         #image_data = GetImageDataFromFigure(fig)
         #st.image(image_data)
 
-        st.button(label="Recommencer", use_container_width=True, on_click=OnClickReturn)
+    st.button(label="Recommencer", use_container_width=True, on_click=OnClickReturn)
 
 
 style = st.markdown(f'''
@@ -617,12 +621,13 @@ style = st.markdown(f'''
         #linkedin_share {{
             background-color: #0077b5;
         }}
-        
-        
-        /*Résultats */
-        div.stAppViewContainer.appview-container > div > div > div > div.st-emotion-cache-0 {{
-            height: 45vh;
+
+        /* Conteneur du résultat */
+        div.st-emotion-cache-4uzi61 {{
+            height: 55vh;
             overflow: scroll;
+            padding-right: 3em;
+            background-color: #ffffffde;
         }}
     </style>
 ''', unsafe_allow_html=True)
