@@ -107,6 +107,8 @@ def OnClickReturn():
     st.session_state.submitted = False
 
 
+st.set_page_config(page_title=constants.TITLE, page_icon="🍃") 
+
 ##################### Réseaux sociaux #####################
 app_url = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host
 
@@ -348,12 +350,7 @@ if not st.session_state.submitted:
     hue = 140 - int(prediction[0] / ((6765 - 1920) / 140))
     st.button(label="Quelle est mon empreinte carbone ?", use_container_width=True, on_click=OnClickSubmit)
 else:
-    with st.container(border=True):
-        st.markdown(f'''
-            <style>
-            </style>
-        ''', unsafe_allow_html=True)
-        
+    with st.container(border=True):        
         st.session_state.x_new = BuildFormDataframe(st.session_state)
         X_transformed_new = cf.transform(st.session_state.x_new)
 
