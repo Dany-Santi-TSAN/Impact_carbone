@@ -15,7 +15,7 @@ raw_data/
 __pycache__
 
 # env python
-.python-version
+#.python-version
 
 # IDE #
 *.vscode
