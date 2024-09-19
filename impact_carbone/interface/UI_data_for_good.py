@@ -5,8 +5,8 @@ import streamlit as st
 from ui_files.ui_functions import BuildFormDataframe
 from urllib.parse import urlencode
 from sys import path
-from impact_carbone.ml_logic.predict import GetPrediction, predict_x
-from impact_carbone.ml_logic.graphique import graphique, GetImageDataFromFigure
+from impact_carbone.ml_logic.predict import predict_x
+from impact_carbone.ml_logic.graphique import graphique
 import pandas as pd
 from ui_files.recommendations import generate_recommendations
 import pickle
@@ -57,58 +57,16 @@ model_path = constants.MODEL_PATH
 with open(model_path, 'rb') as model_file:
     best_gbr,cf, X_train, X_test, y_train, y_test = pickle.load(model_file)
 
-    if 'x_new' not in st.session_state:
-        st.session_state.x_new = None
-    if 'submitted' not in st.session_state:
-        st.session_state.submitted = False
-    if 'body_type' not in st.session_state:
-        st.session_state.body_type = default_values.body_type
-    if 'gender' not in st.session_state:
-        st.session_state.gender = default_values.gender
-    if 'diet' not in st.session_state:
-        st.session_state.diet = default_values.diet
-    if 'waste_bag_weekly_count' not in st.session_state:
-        st.session_state.waste_bag_weekly_count = default_values.waste_bag_weekly_count
-    if 'waste_bag_type' not in st.session_state:
-        st.session_state.waste_bag_type = default_values.waste_bag_type
-    if 'recycling' not in st.session_state:
-        st.session_state.recycling = default_values.recycling
-    if 'personal_hygiene' not in st.session_state:
-        st.session_state.personal_hygiene = default_values.personal_hygiene
-    if 'heating' not in st.session_state:
-        st.session_state.heating = default_values.heating
-    if 'cooking' not in st.session_state:
-        st.session_state.cooking = default_values.cooking
-    if 'efficiency' not in st.session_state:
-        st.session_state.efficiency = default_values.efficiency
-    if 'transportation_mode' not in st.session_state:
-        st.session_state.transportation_mode = default_values.transportation_mode
-    if 'energy_source' not in st.session_state:
-        st.session_state.energy_source = default_values.energy_source
-    if 'monthly_distance' not in st.session_state:
-        st.session_state.monthly_distance = default_values.monthly_distance
-    if 'air_travel' not in st.session_state:
-        st.session_state.air_travel = default_values.air_travel
-    if 'social_activity' not in st.session_state:
-        st.session_state.social_activity = default_values.social_activity
-    if 'screen_time' not in st.session_state:
-        st.session_state.screen_time = default_values.screen_time
-    if 'monthly_grocery' not in st.session_state:
-        st.session_state.monthly_grocery = default_values.monthly_grocery
-    if 'internet_time' not in st.session_state:
-        st.session_state.internet_time = default_values.internet_time
-    if 'clothes' not in st.session_state:
-        st.session_state.clothes = default_values.clothes
-"""
 if 'x_new' not in st.session_state:
     st.session_state.x_new = None
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
-
 if 'body_type' not in st.session_state:
     st.session_state.body_type = default_values.body_type
 if 'gender' not in st.session_state:
     st.session_state.gender = default_values.gender
+if 'diet' not in st.session_state:
+    st.session_state.diet = default_values.diet
 if 'waste_bag_weekly_count' not in st.session_state:
     st.session_state.waste_bag_weekly_count = default_values.waste_bag_weekly_count
 if 'waste_bag_type' not in st.session_state:
@@ -141,7 +99,7 @@ if 'internet_time' not in st.session_state:
     st.session_state.internet_time = default_values.internet_time
 if 'clothes' not in st.session_state:
     st.session_state.clothes = default_values.clothes
-"""
+
 def OnClickSubmit():
     st.session_state.submitted = True
 
@@ -385,48 +343,52 @@ if not st.session_state.submitted:
 
 
     st.session_state.x_new = BuildFormDataframe(st.session_state)
-    prediction= GetPrediction(st.session_state.x_new)
+    X_transformed_new = cf.transform(st.session_state.x_new)
+    prediction = predict_x(X_transformed_new, best_gbr)
     hue = 140 - int(prediction[0] / ((6765 - 1920) / 140))
     st.button(label="Quelle est mon empreinte carbone ?", use_container_width=True, on_click=OnClickSubmit)
 else:
-    st.session_state.x_new = BuildFormDataframe(st.session_state)
-    prediction, x_new = GetPrediction(st.session_state.x_new)
-    prediction = prediction[0]
-    hue = 140 - int(prediction / ((6765 - 1920) / 140))
-    result = f"{round((prediction / 1_000), 2)} tonnes" if prediction > 1_000 else f"{round(prediction, 2)} kilogrammes"
-    f"Votre score de pollution est de {result} de CO₂ par mois."
+    with st.container():
+        st.session_state.x_new = BuildFormDataframe(st.session_state)
+        X_transformed_new = cf.transform(st.session_state.x_new)
 
-    data_country_co2 = pd.read_csv("/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
+        prediction = predict_x(X_transformed_new, best_gbr)
+        prediction = prediction[0]
+        hue = 140 - int(prediction / ((6765 - 1920) / 140))
+        result = f"{round((prediction / 1_000), 2)} tonnes" if prediction > 1_000 else f"{round(prediction, 2)} kilogrammes"
+        f"Votre score de pollution est de {result} de CO₂ par mois."
 
-    fig = graphique(prediction, data_country_co2)
-    st.pyplot(fig)
+        data_country_co2 = pd.read_csv("impact_carbone/ml_logic/raw_data/production_based_co2_emissions.csv")
 
-    data_path = constants.DATA_PATH
-    df, dict_variables_ordinal_categorical = data_cleaning_import(data_path)
+        fig = graphique(prediction, data_country_co2)
+        st.pyplot(fig)
 
-    variables_quantitative, variables_ordinal, variables_for_one_hot_encoded = selection_types_features(df)
-    cf, X_transformed_df, new_column_names = preprocess(
-        df,
-        variables_quantitative,
-        variables_ordinal,
-        variables_for_one_hot_encoded,
-        dict_variables_ordinal_categorical
-    )
+        data_path = constants.DATA_PATH
+        df, dict_variables_ordinal_categorical = data_cleaning_import(data_path)
 
-    # Preprocessing sur x_new
-    # X_transformed_new = cf.fit_transform(x_new)
-    X_transformed_new = prep_x_new(x_new, cf, new_column_names)
+        variables_quantitative, variables_ordinal, variables_for_one_hot_encoded = selection_types_features(df)
+        cf, X_transformed_df, new_column_names = preprocess(
+            df,
+            variables_quantitative,
+            variables_ordinal,
+            variables_for_one_hot_encoded,
+            dict_variables_ordinal_categorical
+        )
 
-    recommendations = generate_recommendations(best_gbr, X_transformed_new, sample_ind=0, top_n=3, recommendation_dict=constants.RECOMMANDATION_DICT)
-    st.write("Recommandations basées sur les caractéristiques les plus importantes :")
-    for rec in recommendations:
-        st.write(f"- {rec}")
+        # Preprocessing sur x_new
+        # X_transformed_new = cf.fit_transform(x_new)
+        X_transformed_new = prep_x_new(st.session_state.x_new, cf, new_column_names)
 
-    #fig = graphique(prediction, data_country_co2)
-    #image_data = GetImageDataFromFigure(fig)
-    #st.image(image_data)
+        recommendations = generate_recommendations(best_gbr, X_transformed_new, sample_ind=0, top_n=3)
+        st.write("Recommandations basées sur les caractéristiques les plus importantes :")
+        for rec in recommendations:
+            st.write(f"- {rec}")
 
-    st.button(label="Recommencer", use_container_width=True, on_click=OnClickReturn)
+        #fig = graphique(prediction, data_country_co2)
+        #image_data = GetImageDataFromFigure(fig)
+        #st.image(image_data)
+
+        st.button(label="Recommencer", use_container_width=True, on_click=OnClickReturn)
 
 
 style = st.markdown(f'''
@@ -654,6 +616,13 @@ style = st.markdown(f'''
         }}
         #linkedin_share {{
             background-color: #0077b5;
+        }}
+        
+        
+        /*Résultats */
+        div.stAppViewContainer.appview-container > div > div > div > div.st-emotion-cache-0 {{
+            height: 45vh;
+            overflow: scroll;
         }}
     </style>
 ''', unsafe_allow_html=True)
