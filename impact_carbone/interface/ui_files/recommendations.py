@@ -1,6 +1,6 @@
 
 import shap
-from ui_files.constants import RECOMMANDATION_DICT
+from impact_carbone.interface.ui_files.constants import RECOMMANDATION_DICT
 
 # Fonction pour générer des recommandations
 def generate_recommendations(model, X_test, sample_ind=0, top_n=3, recommandation_dict=RECOMMANDATION_DICT):

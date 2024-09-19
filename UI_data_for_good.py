@@ -1,28 +1,27 @@
 import os.path, base64
-import ui_files.constants as constants
-import ui_files.default_values as default_values
+import impact_carbone.interface.ui_files.constants as constants
+import impact_carbone.interface.ui_files.default_values as default_values
 import streamlit as st
-from ui_files.ui_functions import BuildFormDataframe
+from impact_carbone.interface.ui_files.ui_functions import BuildFormDataframe
 from urllib.parse import urlencode
 from sys import path
-from impact_carbone.ml_logic.predict import predict_x
+from impact_carbone.ml_logic.predict import predict_x, prep_x_new
 from impact_carbone.ml_logic.graphique import graphique
 import pandas as pd
-from ui_files.recommendations import generate_recommendations
+from impact_carbone.interface.ui_files.recommendations import generate_recommendations
 import pickle
-from impact_carbone.ml_logic.predict import *
 from impact_carbone.ml_logic.data import data_cleaning_import
-from impact_carbone.ml_logic.preprocessing import preprocess
+from impact_carbone.ml_logic.preprocessing import preprocess, selection_types_features
 
 # setting path
 path.append('../ml_logic')
 
 # Chemin de l'image de fond
 my_path = os.path.abspath(os.path.dirname(__file__))
-background_image_path = os.path.join(my_path, "ui_files/assets/montagnes.png")
-truth_logo_path = os.path.join(my_path, "ui_files/assets/truth_social_share.png")
-whatsapp_logo_path = os.path.join(my_path, "ui_files/assets/whatsapp_share.png")
-mailto_logo_path = os.path.join(my_path, "ui_files/assets/mail_to.png")
+background_image_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/montagnes.png")
+truth_logo_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/truth_social_share.png")
+whatsapp_logo_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/whatsapp_share.png")
+mailto_logo_path = os.path.join(my_path, "/home/dany_tsan/code/Dany-Santi-TSAN/Impact_carbone/impact_carbone/interface/ui_files/assets/mail_to.png")
 
 energy_source = None
 prediction = None

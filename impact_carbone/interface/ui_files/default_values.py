@@ -1,4 +1,4 @@
-from ui_files.constants import DICT_DISPLAY_TO_MDL
+from impact_carbone.interface.ui_files.constants import DICT_DISPLAY_TO_MDL
 
 body_type = DICT_DISPLAY_TO_MDL['body_type'][0][0]
 gender = DICT_DISPLAY_TO_MDL['gender'][0][0]

@@ -1,6 +1,6 @@
 
 import pandas as pd
-import ui_files.constants as constants
+import impact_carbone.interface.ui_files.constants as constants
 
 def BuildFormDataframe(session_dict):
     x_new = pd.DataFrame({
@@ -27,5 +27,5 @@ def BuildFormDataframe(session_dict):
         "Cooking_With": [str([constants.DICT_DISPLAY_TO_MDL['cooking'][1][constants.DICT_DISPLAY_TO_MDL['cooking'][0].index(choice)] for choice in session_dict.cooking])],
         "Recycling": [str([constants.DICT_DISPLAY_TO_MDL['recycling'][1][constants.DICT_DISPLAY_TO_MDL['recycling'][0].index(choice)] for choice in session_dict.recycling])],
     })
-    
+
     return x_new
