@@ -133,16 +133,17 @@ str_truth_params = urlencode(truth_link_params)
 truth_share_link = f"https://truthsocial.com/share?{str_truth_params}"
 
 facebook_link_params = {
-    'link': app_url
+    'href': app_url,
+    'display': 'popup'
 }
 str_facebook_params = urlencode(facebook_link_params)
-facebook_share_link = f"https://www.facebook.com/share_channel/?{str_facebook_params}"
+facebook_share_link = f"https://www.facebook.com/dialog/share?{str_facebook_params}"
 
 linkedin_link_params = {
-    'shareUrl': app_url
+    'url': app_url
 }
 str_linkedin_params = urlencode(linkedin_link_params)
-linkedin_share_link = f"https://www.linkedin.com/feed/?{str_linkedin_params}"
+linkedin_share_link = f"https://www.linkedin.com/sharing/share-offsite/?{str_linkedin_params}"
 
 reddit_link_params = {
     'url': app_url,
@@ -629,3 +630,14 @@ style = st.markdown(f'''
         }}
     </style>
 ''', unsafe_allow_html=True)
+
+###### Répare les liens vers les réseaux sociaux
+from streamlit.components.v1 import html
+html(f"""
+    <script>
+        links = parent.document.getElementsByTagName('a');
+        for (let link of links) {{
+            link.setAttribute('target', '_blank');
+        }}
+    </script>
+""")
