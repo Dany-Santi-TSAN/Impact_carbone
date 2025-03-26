@@ -8,7 +8,7 @@ import impact_carbone.interface.ui_files.constants as constants
 
 
 # variable de notre pickle
-model_path = 'model_2.pkl'
+model_path = 'model_3.pkl'
 
 data_path = constants.DATA_PATH
 df,dict_variables_ordinal_categorical= data_cleaning_import(data_path)

@@ -25,7 +25,7 @@ def predict_x(X_transformed_new, best_gbr) :
 
 def GetPrediction(x_new):
     path_parts = realpath(__file__).split("/")
-    path_parts = path_parts[:-2] + ["ml_logic", "model_2.pkl"]
+    path_parts = path_parts[:-2] + ["ml_logic", "model_3.pkl"]
     model_path = sep.join(path_parts)
 
     # Charger le modèle avec pickle
