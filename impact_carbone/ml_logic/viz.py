@@ -43,7 +43,7 @@ def visualize_shap_pie_by_group(model, X_test, sample_ind=0):
     feature_names = X_test_filled.columns
     shap_importances = abs(shap_sample)  # Importance absolue des SHAP values
 
-    # Définir les groupes de caractéristiques
+    # Définir les groupes de features
     groups = {
         "Home": [
             "Heating_Energy_Source_electricity",
