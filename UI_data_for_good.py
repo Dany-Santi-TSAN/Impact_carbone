@@ -12,6 +12,12 @@ from impact_carbone.interface.ui_files.recommendations import generate_recommend
 import pickle
 from impact_carbone.ml_logic.data import data_cleaning_import
 from impact_carbone.ml_logic.preprocessing import preprocess, selection_types_features
+import sklearn
+
+st.set_page_config(page_title=constants.TITLE, page_icon="🍃")
+
+st.write(f"scikit-learn version: {sklearn.__version__}")
+st.write(f"pickle protocol version: {pickle.HIGHEST_PROTOCOL}")
 
 # setting path
 path.append('../ml_logic')
@@ -106,7 +112,7 @@ def OnClickReturn():
     st.session_state.submitted = False
 
 
-st.set_page_config(page_title=constants.TITLE, page_icon="🍃")
+# st.set_page_config(page_title=constants.TITLE, page_icon="🍃")
 
 ##################### Réseaux sociaux #####################
 app_url = st.runtime.get_instance()._session_mgr.list_active_sessions()[0].client.request.host

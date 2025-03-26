@@ -12,7 +12,7 @@ pathlib
 google.cloud
 
 #Data process
-scikit-learn
+scikit-learn==1.5.2
 
 #Interface
 Streamlit
